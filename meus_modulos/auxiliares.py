@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.stats import shapiro, levene
 
 def tabela_dist_freq(dataframe, coluna, coluna_frequencia = False):
 
@@ -55,3 +56,37 @@ def hist_box(dataframe, coluna, intervalos = 'auto'):
     ax2.legend()
 
     plt.show()
+
+def analise_shapiro(dataframe, alfa = 0.05):
+    print("Teste de Shapiro-Wilk")
+
+    for coluna in dataframe.columns:
+        estatistica_sw, valor_p_sw = shapiro(dataframe[coluna], nan_policy = 'omit')
+        print(f"{estatistica_sw=:.3f}")
+        if valor_p_sw > alfa:
+            print(f"{coluna} segue uma distribuição normal (valor p: {valor_p_sw=:.3f})")
+        else:
+            print(f"{coluna} não segue uma distribuição normal (valor p: {valor_p_sw=:.3f})")
+
+
+def analise_levene(dataframe, alfa = 0.05, center = 'mean'):
+    print("Teste de Levene")
+
+    estatistica_levene, valor_p_lv = levene(
+        *[dataframe[coluna] for coluna in dataframe.columns], 
+        center = center,
+        nan_policy = 'omit'
+    )
+
+    print(f"{estatistica_levene=:.3f}")
+    if valor_p_lv > alfa:
+        print(f"Variâncias iguais (valor p: {valor_p_lv=:.3f})")
+    else:
+        print(f"Ao menos uma variância diferente (valor p: {valor_p_lv=:.3f})")
+
+def analises_shapiro_levene(dataframe, alfa = 0.05, center= 'mean'):
+    analise_shapiro(dataframe, alfa)
+
+    print()
+
+    analise_levene(dataframe, alfa, center)
