@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy.stats import shapiro, levene, ttest_ind, ttest_rel, f_oneway
+from scipy.stats import shapiro, levene, ttest_ind, ttest_rel, f_oneway, wilcoxon, mannwhitneyu, friedmanchisquare, kruskal
 
 def tabela_dist_freq(dataframe, coluna, coluna_frequencia = False):
 
@@ -143,3 +143,75 @@ def analise_f_oneway(
         print(f"Não rejeita a hipótese nula (valor p: {valor_p_anova=:.3f})")
     else:
         print(f"Rejeita a hipótese nula (valor p: {valor_p_anova=:.3f})")
+
+def analise_wilcoxon(
+        dataframe,
+        alfa = 0.05,
+        alternativa = 'two-sided'
+):  
+    print('Teste Wilcoxon')
+    
+    estatistica_wil, valor_p_wil = wilcoxon(
+        *[dataframe[coluna] for coluna in dataframe.columns], 
+        nan_policy = 'omit',
+        alternative= alternativa
+    )
+
+    print(f"{estatistica_wil=:.3f}")
+    if valor_p_wil > alfa:
+        print(f"Não rejeita a hipótese nula (valor p: {valor_p_wil=:.3f})")
+    else:
+        print(f"Rejeita a hipótese nula (valor p: {valor_p_wil=:.3f})")
+
+def analise_mannwhitneyu(
+        dataframe,
+        alfa = 0.05,
+        alternativa = 'two-sided'
+):  
+    print('Teste Mann-Whitney')
+    
+    estatistica_mann, valor_p_mann = mannwhitneyu(
+        *[dataframe[coluna] for coluna in dataframe.columns], 
+        nan_policy = 'omit',
+        alternative= alternativa
+    )
+
+    print(f"{estatistica_mann=:.3f}")
+    if valor_p_mann > alfa:
+        print(f"Não rejeita a hipótese nula (valor p: {valor_p_mann=:.3f})")
+    else:
+        print(f"Rejeita a hipótese nula (valor p: {valor_p_mann=:.3f})")
+
+def analise_friedman(
+        dataframe,
+        alfa = 0.05,
+):  
+    print('Teste Friedman')
+    
+    estatistica_friedman, valor_p_friedman = friedmanchisquare(
+        *[dataframe[coluna] for coluna in dataframe.columns], 
+        nan_policy = 'omit'
+    )
+
+    print(f"{estatistica_friedman=:.3f}")
+    if valor_p_friedman > alfa:
+        print(f"Não rejeita a hipótese nula (valor p: {valor_p_friedman=:.3f})")
+    else:
+        print(f"Rejeita a hipótese nula (valor p: {valor_p_friedman=:.3f})")
+
+def analise_kruskal(
+        dataframe,
+        alfa = 0.05,
+):  
+    print('Teste Kruskal')
+    
+    estatistica_kru, valor_p_kru = kruskal(
+        *[dataframe[coluna] for coluna in dataframe.columns], 
+        nan_policy = 'omit'
+    )
+
+    print(f"{estatistica_kru=:.3f}")
+    if valor_p_kru > alfa:
+        print(f"Não rejeita a hipótese nula (valor p: {valor_p_kru=:.3f})")
+    else:
+        print(f"Rejeita a hipótese nula (valor p: {valor_p_kru=:.3f})")
