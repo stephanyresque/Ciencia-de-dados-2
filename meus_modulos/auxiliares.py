@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy.stats import shapiro, levene
+from scipy.stats import shapiro, levene, ttest_ind, ttest_rel, f_oneway
 
 def tabela_dist_freq(dataframe, coluna, coluna_frequencia = False):
 
@@ -90,3 +90,56 @@ def analises_shapiro_levene(dataframe, alfa = 0.05, center= 'mean'):
     print()
 
     analise_levene(dataframe, alfa, center)
+
+def analise_ttest_ind(
+        dataframe,
+        alfa = 0.05,
+        variancias_iguais = True,
+        alternativa = 'two-sided'
+):
+    estatistica_ttest, valor_p_ttest = ttest_ind(
+        *[dataframe[coluna] for coluna in dataframe.columns], 
+        equal_var = variancias_iguais,
+        alternative= alternativa,
+        nan_policy = 'omit'
+    )
+
+    print(f"{estatistica_ttest=:.3f}")
+    if valor_p_ttest > alfa:
+        print(f"Não rejeita a hipótese nula (valor p: {valor_p_ttest=:.3f})")
+    else:
+        print(f"Rejeita a hipótese nula (valor p: {valor_p_ttest=:.3f})")    
+
+def analise_ttest_rel(
+        dataframe,
+        alfa = 0.05,
+        alternativa = 'two-sided'
+):
+    estatistica_ttest, valor_p_ttest = ttest_rel(
+        *[dataframe[coluna] for coluna in dataframe.columns], 
+        alternative= alternativa,
+        nan_policy = 'omit'
+    )
+
+    print(f"{estatistica_ttest=:.3f}")
+    if valor_p_ttest > alfa:
+        print(f"Não rejeita a hipótese nula (valor p: {valor_p_ttest=:.3f})")
+    else:
+        print(f"Rejeita a hipótese nula (valor p: {valor_p_ttest=:.3f})")   
+
+def analise_f_oneway(
+        dataframe,
+        alfa = 0.05,
+):  
+    print('Teste ANOVA one way')
+    
+    estatistica_anova, valor_p_anova = f_oneway(
+        *[dataframe[coluna] for coluna in dataframe.columns], 
+        nan_policy = 'omit'
+    )
+
+    print(f"{estatistica_anova=:.3f}")
+    if valor_p_anova > alfa:
+        print(f"Não rejeita a hipótese nula (valor p: {valor_p_anova=:.3f})")
+    else:
+        print(f"Rejeita a hipótese nula (valor p: {valor_p_anova=:.3f})")
